@@ -27,12 +27,16 @@ static void sendToServer(NSString* title, NSString* message) {
 	%orig;
 	[[[NSOperationQueue alloc] init] addOperationWithBlock:^{
 		@try {
-			// todo: some notifications (discord, twitch, etc) don't have a title, therefore the catch will be triggered!!
 			NSString *title = bulletin.title;
 			NSString *message = bulletin.message;
 
+			if(title == nil) { // a few applications don't have a title
+				title = @"";
+			}
+
 			sendToServer(title, message);
 		} @catch (NSException *exception) {
+			sendToServer(@"Error", @"Error");
 			NSLog(@"Error: %@", exception);
 		}
 	}];
