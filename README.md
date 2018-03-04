@@ -1,1 +1,1 @@
-snek
+:snake:
