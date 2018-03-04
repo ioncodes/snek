@@ -1,9 +1,9 @@
-Package: com.yourcompany.snek
+Package: com.ioncodes.snek
 Name: snek
 Depends: mobilesubstrate
 Version: 0.0.1
 Architecture: iphoneos-arm
-Description: An awesome MobileSubstrate tweak!
+Description: Forward your notifications to Windows, Mac OS X, Linux, Discord and Slack!
 Maintainer: Luca Marcelli
 Author: Luca Marcelli
 Section: Tweaks
