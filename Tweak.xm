@@ -6,6 +6,7 @@ static void sendToServer(NSString* title, NSString* message) {
 	NSMutableDictionary *payload = [NSMutableDictionary dictionary];
 	[payload setObject:title forKey:@"title"];
 	[payload setObject:message forKey:@"message"];
+	[payload setObject:@"YOUR_TOKEN" forKey:@"token"]; // todo: move to preferences
 
 	NSData *jsonData = [NSJSONSerialization dataWithJSONObject:payload options:0 error:nil];
 
