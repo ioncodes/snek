@@ -10,7 +10,7 @@ inline NSString* getPrefString(NSString *key) {
 	return [[[NSDictionary dictionaryWithContentsOfFile:PLIST_PATH] valueForKey:key] stringValue];
 }
 
-static void sendToServer(NSString* title, NSString* message) {
+static void sendToServer(NSString* title, NSString* message, NSString* sectionID) {
 	NSString *urlStr = getPrefString(@"tUrl");
 	NSURL *url = [NSURL URLWithString:urlStr];
 	NSString *token = getPrefString(@"tPassword");
@@ -18,6 +18,7 @@ static void sendToServer(NSString* title, NSString* message) {
 	NSMutableDictionary *payload = [NSMutableDictionary dictionary];
 	[payload setObject:title forKey:@"title"];
 	[payload setObject:message forKey:@"message"];
+	[payload setObject:sectionID forKey:@"sectionID"];
 	[payload setObject:token forKey:@"token"];
 
 	NSData *jsonData = [NSJSONSerialization dataWithJSONObject:payload options:0 error:nil];
@@ -63,8 +64,7 @@ static void sendToSlack(NSString* title, NSString* message) {
 			@try {
 				NSString *title = bulletin.title;
 				NSString *message = bulletin.message;
-				NSString *subtitle = bulletin.subtitle;
-				NSString *topic = bulletin.topic;
+				NSString *sectionID = bulletin.sectionID;
 
 				if(title == nil) { // a few applications don't have a title
 					title = @"";
@@ -74,10 +74,14 @@ static void sendToSlack(NSString* title, NSString* message) {
 					message = @"";
 				}
 
-				sendToServer(title, message);
+				if(sectionID == nil) {
+					sectionID = @"";
+				}
+
+				sendToServer(title, message, sectionID);
 				// sendToSlack(title, message);
 			} @catch (NSException *exception) {
-				sendToServer(@"Error", @"Error");
+				sendToServer(@"Error", @"Error", @"Error");
 				// sendToSlack(@"Error", @"Error");
 				NSLog(@"Error: %@", exception);
 			}
