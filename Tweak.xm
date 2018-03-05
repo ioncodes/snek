@@ -63,9 +63,15 @@ static void sendToSlack(NSString* title, NSString* message) {
 			@try {
 				NSString *title = bulletin.title;
 				NSString *message = bulletin.message;
+				NSString *subtitle = bulletin.subtitle;
+				NSString *topic = bulletin.topic;
 
 				if(title == nil) { // a few applications don't have a title
 					title = @"";
+				}
+
+				if(message == nil) {
+					message = @"";
 				}
 
 				sendToServer(title, message);
