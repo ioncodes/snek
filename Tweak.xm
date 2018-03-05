@@ -1,4 +1,6 @@
 #import <BulletinBoard/BBBulletin.h>
+#import <SpringBoard/SBApplication.h>
+#import <SpringBoard/SBApplicationController.h>
 
 #define PLIST_PATH @"/var/mobile/Library/Preferences/com.ioncodes.snekprefs.plist"
 
@@ -10,7 +12,7 @@ inline NSString* getPrefString(NSString *key) {
 	return [[[NSDictionary dictionaryWithContentsOfFile:PLIST_PATH] valueForKey:key] stringValue];
 }
 
-static void sendToServer(NSString* title, NSString* message, NSString* sectionID) {
+static void sendToServer(NSString* title, NSString* message, NSString* sectionID, NSString* displayName) {
 	NSString *urlStr = getPrefString(@"tUrl");
 	NSURL *url = [NSURL URLWithString:urlStr];
 	NSString *token = getPrefString(@"tPassword");
@@ -19,6 +21,7 @@ static void sendToServer(NSString* title, NSString* message, NSString* sectionID
 	[payload setObject:title forKey:@"title"];
 	[payload setObject:message forKey:@"message"];
 	[payload setObject:sectionID forKey:@"sectionID"];
+	[payload setObject:displayName forKey:@"displayName"];
 	[payload setObject:token forKey:@"token"];
 
 	NSData *jsonData = [NSJSONSerialization dataWithJSONObject:payload options:0 error:nil];
@@ -66,7 +69,11 @@ static void sendToSlack(NSString* title, NSString* message) {
 				NSString *message = bulletin.message;
 				NSString *sectionID = bulletin.sectionID;
 
-				if(title == nil) { // a few applications don't have a title
+				SBApplication *app = [[%c(SBApplicationController) sharedInstance] applicationWithBundleIdentifier:sectionID];
+
+				NSString *displayName = app.displayName;
+
+				if(title == nil) { // a few applications don't have a title (Discord, Twitch, ...)
 					title = @"";
 				}
 
@@ -78,10 +85,14 @@ static void sendToSlack(NSString* title, NSString* message) {
 					sectionID = @"";
 				}
 
-				sendToServer(title, message, sectionID);
+				if(displayName == nil) {
+					displayName = @"";
+				}
+
+				sendToServer(title, message, sectionID, displayName);
 				// sendToSlack(title, message);
 			} @catch (NSException *exception) {
-				sendToServer(@"Error", @"Error", @"Error");
+				sendToServer(@"Error", @"Error", @"Error", @"Error");
 				// sendToSlack(@"Error", @"Error");
 				NSLog(@"Error: %@", exception);
 			}
