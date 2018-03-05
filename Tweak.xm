@@ -6,13 +6,19 @@ inline bool getPrefBool(NSString *key) {
 	return [[[NSDictionary dictionaryWithContentsOfFile:PLIST_PATH] valueForKey:key] boolValue];
 }
 
+inline NSString* getPrefString(NSString *key) {
+	return [[[NSDictionary dictionaryWithContentsOfFile:PLIST_PATH] valueForKey:key] stringValue];
+}
+
 static void sendToServer(NSString* title, NSString* message) {
-	NSURL *url = [NSURL URLWithString:@"http://snek.ioncodes.com/notify"]; // todo: move to preferences
+	NSString *urlStr = getPrefString(@"tUrl");
+	NSURL *url = [NSURL URLWithString:urlStr];
+	NSString *token = getPrefString(@"tPassword");
 
 	NSMutableDictionary *payload = [NSMutableDictionary dictionary];
 	[payload setObject:title forKey:@"title"];
 	[payload setObject:message forKey:@"message"];
-	[payload setObject:@"TOKEN" forKey:@"token"]; // todo: move to preferences
+	[payload setObject:token forKey:@"token"];
 
 	NSData *jsonData = [NSJSONSerialization dataWithJSONObject:payload options:0 error:nil];
 
